@@ -108,7 +108,7 @@ st.markdown("<h3 style='text-align: center;'>이름 + 생년월일만 알면 모
 
 st.markdown("<div style='text-align: center;'>", unsafe_allow_html=True)
 name = st.text_input("이름", value="", placeholder="홍길동")
-birth_input = st.text_input("생년월일 8자리 (예: 19990101)", value="", placeholder="19980711")
+birth_input = st.text_input("생년월일 8자리 (예: 19990101)", value="", placeholder="19990101")
 birth_hour = st.slider("출생 시간 (대략으로 괜찮아요)", 0, 23, 12)
 st.markdown("</div>", unsafe_allow_html=True)
 
