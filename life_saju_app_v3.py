@@ -107,8 +107,8 @@ st.markdown("<h1 style='text-align: center;'>나의 전생·사주·미래 대�
 st.markdown("<h3 style='text-align: center;'>이름 + 생년월일만 알면 모든 운명이 보인다</h3>", unsafe_allow_html=True)
 
 st.markdown("<div style='text-align: center;'>", unsafe_allow_html=True)
-name = st.text_input("이름 또는 별명", value="", placeholder="홍길동")
-birth_input = st.text_input("생년월일 8자리 (예: 19980711)", value="", placeholder="19980711")
+name = st.text_input("이름", value="", placeholder="홍길동")
+birth_input = st.text_input("생년월일 8자리 (예: 19990101)", value="", placeholder="19980711")
 birth_hour = st.slider("출생 시간 (대략으로 괜찮아요)", 0, 23, 12)
 st.markdown("</div>", unsafe_allow_html=True)
 
@@ -128,7 +128,7 @@ if analyze:
         st.balloons()
 
 if "selected_past" in st.session_state:
-    st.markdown("### 과거에 살았을 법한 10가지 삶")
+    st.markdown("### 과거에 살았을 법한 10가지 삶(최대한 비슷한 삶)")
     st.markdown("<p style='text-align: center; font-size:18px;'>너가 끌리는 삶 2~3개 골라봐!</p>", unsafe_allow_html=True)
 
     chosen = []
@@ -159,7 +159,7 @@ if "selected_past" in st.session_state:
         random.seed(sum(hash(life) for life in st.session_state.my_past))
         selected_future = random.sample(future_lives, 10)
 
-        st.markdown("### 지금부터 펼쳐질 10가지 미래")
+        st.markdown("### 지금부터 펼쳐질 10가지 미래(이 중에서 몇가지는 분명 나타남)")
         for i, life in enumerate(selected_future):
             st.write(f"{i+1}. {life}")
 
@@ -170,4 +170,4 @@ if "selected_past" in st.session_state:
 
         st.balloons()
 
-st.markdown("<p style='text-align: center; color: gray; margin-top: 50px;'>Made with ❤️ by 너</p>", unsafe_allow_html=True)
+st.markdown("<p style='text-align: center; color: gray; margin-top: 50px;'>Made with Moon by 너</p>", unsafe_allow_html=True)
