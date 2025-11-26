@@ -1,18 +1,9 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
-"""
-Created on Tue Nov 25 15:23:51 2025
-
-@author: moongwibok
-"""
-
-# 파일 이름: life_saju_app_v3.py
-# 기존 파일 덮어쓰기 하거나 새로 만들어서 저장!
+# 파일 이름 그대로: life_saju_app_v3.py 덮어쓰기 하면 됨!
 
 import streamlit as st
 import random
 
-# 리스트는 이전과 동일 (생략 없이 그대로 복사해서 써!)
+# 데이터 리스트 (이전과 동일, 생략 없이 복사!)
 past_lives = [
     "고대 이집트 피라미드 건축 감독관", "조선 시대 한양에서 한옥 대장장이", "중세 유럽 기사단의 전령",
     "고려 시대 개경에서 도공(옹기장)", "삼국시대 백제의 무역 상인", "바이킹 배의 항해사",
@@ -45,61 +36,88 @@ future_lives = [
     "2050년 아직도 현역 프로그래머로 일하면서 후배들 멘토링", "2070년 72세에 대학 새내기 되는 늦깎이 대학생"
 ]
 
-st.title("🔮 나의 전생 · 사주 · 미래 시뮬레이터 v3.0")
-st.markdown("**이제 너가 직접 전생 고른다!**")
+# 재물운 디테일 문구들 (완전 럭셔리하게!)
+money_fortunes = [
+    "2030~2033년 사이에 부동산/주식/사업 중 하나로 대박 터질 사주야. 특히 31세 무렵에 돈이 알아서 굴러들어와!",
+    "정재(正財) 강해서 월급/안정적인 수입이 계속 늘어나는 타입. 2028년부터 연봉 2배 될 가능성 87%",
+    "편재(偏財) 대박 기운! 로또, 코인, 투자로 갑자기 큰돈 만질 확률이 70% 이상이야. 2031년 주목!",
+    "식상생재 구조라 창의력으로 돈을 번다. 유튜브/콘텐츠/창업으로 35세 전에 억 소리 듣게 될 거야",
+    "인성+비겁 조화로 사람 덕에 돈 번다. 2029년에 귀인이 나타나서 큰 기회를 줄 가능성 90%",
+    "관성 약하고 재성 강해서 공무원/회사원은 답 없고 프리랜서나 사업가로 대박 날 운명!"
+]
 
-with st.sidebar:
-    st.header("입력해줘")
-    name = st.text_input("이름(별명)", "갑목이")
-    birth_input = st.text_input("생년월일 8자리", "19980711")
-    birth_hour = st.slider("출생 시간(대략)", 0, 23, 12)
+# 페이지 전체 중앙 정렬 + 예쁘게
+st.set_page_config(page_title="나의 운명점", layout="centered")
+st.markdown("<h1 style='text-align: center;'>나의 전생·사주·미래 대예측</h1>", unsafe_allow_html=True)
+st.markdown("<h3 style='text-align: center;'>이름 + 생년월일만 알면 모든 운명이 보인다</h3>", unsafe_allow_html=True)
 
-    if st.button("운명 분석 시작!", type="primary"):
-        if len(birth_input) != 8 or not birth_input.isdigit():
-            st.error("생년월일을 8자리로 정확히 입력해줘!")
-        else:
-            year = int(birth_input[:4])
-            random.seed(year + birth_hour + sum(ord(c) for c in name))  # 재현성
+# 입력창 처음부터 비워지게 + 중앙 배치
+st.markdown("<div style='text-align: center;'>", unsafe_allow_html=True)
+name = st.text_input("이름 또는 별명", value="", placeholder="홍길동")
+birth_input = st.text_input("생년월일 8자리 (예: 19980711)", value="", placeholder="19980711")
+birth_hour = st.slider("출생 시간 (대략으로 괜찮아요)", 0, 23, 12, help="모르면 정오 12시로!")
+st.markdown("</div>", unsafe_allow_html=True)
 
-            # 10개 전생 후보 뽑기
-            selected_past = random.sample(past_lives, 10)
-            st.session_state.selected_past = selected_past
-            st.session_state.name = name
-            st.success("10개 전생 후보 생성 완료! 아래에서 골라봐")
+# 분석 버튼도 중앙으로!
+col1, col2, col3 = st.columns([1, 1, 1])
+with col2:
+    analyze = st.button("지금 바로 운명 분석 시작!", type="primary")
 
-# 전생 10개 보여주고 체크박스로 선택하게 하기
-if "selected_past" in st.session_state:
-    st.subheader("⏪ 태어나기 전 ~ 지금까지 가능한 10가지 삶")
-    st.write("**마음에 드는 2~3개를 직접 골라봐!**")
+if analyze:
+    if len(birth_input) != 8 or not birth_input.isdigit():
+        st.error("생년월일을 8자리로 정확히 입력해주세요!")
+    else:
+        year = int(birth_input[:4])
+        random.seed(year + birth_hour + sum(ord(c) for c in name))
 
-    chosen = []
-    for i, life in enumerate(st.session_state.selected_past, 1):
-        if st.checkbox(f"{i}. {life}", key=f"past_{i}"):
-            chosen.append(life)
+        # 전생 10개
+        selected_past = random.sample(past_lives, 10)
+        st.session_state.selected_past = selected_past
 
-    col1, col2 = st.columns([1, 3])
-    with col1:
-        if st.button("이걸로 확정!", type="primary"):
-            if len(chosen) < 2 or len(chosen) > 3:
-                st.error("2~3개만 골라줘!")
-            else:
-                st.session_state.my_past = chosen
-                st.success(f"확정! 너의 전생 TOP {len(chosen)}개")
-
-    # 확정된 전생 보여주기
-    if "my_past" in st.session_state:
-        st.markdown("### ✅ 너가 선택한 전생")
-        for i, life in enumerate(st.session_state.my_past, 1):
-            st.write(f"**{i}위** → {life}")
-
-        # 미래 10개는 선택한 전생 보고 랜덤 생성
-        random.seed(sum(ord(c) for c in "".join(st.session_state.my_past)))
-        selected_future = random.sample(future_lives, 10)
-
-        st.markdown("### 🚀 지금부터 펼쳐질 10가지 미래 (너의 전생 영향 반영됨)")
-        for i, life in enumerate(selected_future, 1):
-            st.write(f"{i}. {life}")
-
+        st.success(f"{name}님의 운명 분석 시작합니다...")
         st.balloons()
 
-st.caption("재미로 즐기는 시뮬레이터예요~ 실제 사주는 전문가분께!")
+if "selected_past" in st.session_state:
+    st.markdown("### 과거에 살았을 법한 10가지 삶")
+    st.markdown("<p style='text-align: center; font-size:18px;'>너가 끌리는 삶 2~3개 골라봐!</p>", unsafe_allow_html=True)
+
+    chosen = []
+    cols = st.columns(2)
+    for i, life in enumerate(st.session_state.selected_past):
+        with cols[i % 2]:
+            if st.checkbox(f"{i+1}. {life}", key=f"past_{i}"):
+                chosen.append(life)
+
+    col1, col2, col3 = st.columns([1, 2, 1])
+    with col2:
+        if st.button("이걸로 확정! 내 전생이다!", type="primary"):
+            if len(chosen) < 2 or len(chosen) > 3:
+                st.error("2~3개만 골라주세요!")
+            else:
+                st.session_state.my_past = chosen
+                st.success(f"확정! 너의 전생 {len(chosen)}개 저장됨")
+
+    if "my_past" in st.session_state:
+        st.markdown("### 너가 선택한 전생")
+        for i, life in enumerate(st.session_state.my_past):
+            st.write(f"**{i+1}위** → {life}")
+
+        # 재물운 완전 디테일하게!
+        st.markdown("### 특별 분석: 너의 재물운 대예측")
+        money = random.choice(money_fortunes)
+        st.info(f"**{name}님의 재물운**\n\n{money}")
+
+        # 미래 10개 (선택한 전생 기반)
+        random.seed(sum(hash(life) for life in st.session_state.my_past))
+        selected_future = random.sample(future_lives, 10)
+
+        st.markdown("### 지금부터 펼쳐질 10가지 미래")
+        for i, life in enumerate(selected_future):
+            st.write(f"{i+1}. {life}")
+
+        st.markdown("---")
+        st.markdown("<p style='text-align: center;'>재미로 즐기는 운명 시뮬레이션입니다</p>", unsafe_allow_html=True)
+        st.balloons()
+
+# 하단 중앙 로고
+st.markdown("<p style='text-align: center; color: gray; margin-top: 50px;'>Made with ❤️ by 너의 이름</p>", unsafe_allow_html=True)
